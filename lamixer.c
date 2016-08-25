@@ -147,6 +147,7 @@ static snd_mixer_selem_channel_id_t amixer_get_chanid_by_name(const char *channa
         if (strcmp(channame, lua_amixer_channel_names[i].name) == 0)
             return i;
     }
+    return -1;
 }
 
 /**
