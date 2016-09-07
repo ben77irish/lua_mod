@@ -69,7 +69,7 @@
 // }}}
 
 // Typedefs & structures {{{
-
+#define MAX_ENUM_STRING_LEN 50
 typedef struct {
     snd_mixer_selem_channel_id_t chan;
     const char *name;
@@ -364,7 +364,10 @@ LUAA_FUNC(amixer_elem_index)
     const char *index = luaL_checkstring(L, 2);
     long longval;
     long longvalx;
+    unsigned int uintval;
     int intval;
+    int i;
+    int lua_index;
 
     if (strcmp(index, "vol") == 0) {
         if ((*elemptr)->pcaps & LUAA_MIX_CAP_VOLUME)
@@ -440,6 +443,36 @@ LUAA_FUNC(amixer_elem_index)
         lua_pushboolean(L, (*elemptr)->pcaps);
     } else if (strcmp(index, "capture") == 0) {
         lua_pushboolean(L, (*elemptr)->ccaps);
+    } else if (strcmp(index, "item") == 0) {
+        snd_mixer_selem_get_enum_item((*elemptr)->hdl, SND_MIXER_SCHN_FRONT_LEFT, &uintval);
+        if( uintval < snd_mixer_selem_get_enum_items((*elemptr)->hdl) )
+        {
+            char buf[MAX_ENUM_STRING_LEN + 1];
+            buf[MAX_ENUM_STRING_LEN] = '\0';
+            snd_mixer_selem_get_enum_item_name((*elemptr)->hdl, uintval, MAX_ENUM_STRING_LEN, buf );
+            lua_pushstring(L, buf );
+        } else {
+            return 0;
+        }
+    } else if (strcmp(index, "itemnames") == 0) {
+        longval = snd_mixer_selem_get_enum_items((*elemptr)->hdl);
+        if( longval >= 0 )
+        {
+            char buf[MAX_ENUM_STRING_LEN + 1];
+            buf[MAX_ENUM_STRING_LEN] = '\0';
+            lua_createtable(L, 2, 0);
+            for( i = 0,lua_index = 1; i < longval; ++i,++lua_index )
+            {
+                snd_mixer_selem_get_enum_item_name((*elemptr)->hdl, i, MAX_ENUM_STRING_LEN, buf );
+                //Need to set the table index to 1, not 0 as lua is 1-based
+                luaA_isettable(L, -2, lua_index, string, buf);
+            };
+        } else {
+            return 0;
+        }
+
+    } else if (strcmp(index, "isenum") == 0) {
+        lua_pushboolean( L, snd_mixer_selem_is_enumerated((*elemptr)->hdl ));
     } else {
         chanid = amixer_get_chanid_by_name(index);
         chan = lua_newuserdata(L, sizeof(lua_amixer_chan_t));
@@ -470,6 +503,7 @@ LUAA_FUNC(amixer_elem_newindex)
     long longval;
     long longvalx;
     int intval;
+    int i;
 
     if (strcmp(index, "vol") == 0) {
         longval = lua_tonumber(L, 3);
@@ -498,6 +532,24 @@ LUAA_FUNC(amixer_elem_newindex)
                 snd_mixer_selem_set_playback_volume_range((*elemptr)->hdl, longval, longvalx);
             else if ((*elemptr)->ccaps & LUAA_MIX_CAP_VOLUME)
                 snd_mixer_selem_set_capture_volume_range((*elemptr)->hdl, longval, longvalx);
+        }
+    } else if (strcmp(index, "item") == 0) {
+        longval = snd_mixer_selem_get_enum_items((*elemptr)->hdl);
+        if( longval >= 0 )
+        {
+            char buf[MAX_ENUM_STRING_LEN + 1];
+            buf[MAX_ENUM_STRING_LEN] = '\0';
+            const char * itemname = lua_tostring(L,3);
+
+            for( i = 0; i < longval; ++i )
+            {
+                snd_mixer_selem_get_enum_item_name((*elemptr)->hdl, i, MAX_ENUM_STRING_LEN, buf );
+                if( strcmp(itemname, buf) == 0)
+                {
+                    snd_mixer_selem_set_enum_item((*elemptr)->hdl, SND_MIXER_SCHN_FRONT_LEFT, i);
+                    break;
+                }
+            };
         }
     }
 }
