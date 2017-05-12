@@ -551,6 +551,38 @@ LUAA_FUNC(amixer_elem_newindex)
                 }
             };
         }
+    } else if (strcmp(index, "flvol") == 0) { //ALSA Front Left channel
+        longval = lua_tonumber(L, 3);
+        if ((*elemptr)->pcaps & LUAA_MIX_CAP_VOLUME)
+            snd_mixer_selem_set_playback_volume((*elemptr)->hdl, SND_MIXER_SCHN_FRONT_LEFT, longval);
+    } else if (strcmp(index, "frvol") == 0) { //ALSA Front Right channel
+        longval = lua_tonumber(L, 3);
+        if ((*elemptr)->pcaps & LUAA_MIX_CAP_VOLUME)
+            snd_mixer_selem_set_playback_volume((*elemptr)->hdl, SND_MIXER_SCHN_FRONT_RIGHT, longval);
+    } else if (strcmp(index, "rlvol") == 0) { //ALSA Rear Left channel
+        longval = lua_tonumber(L, 3);
+        if ((*elemptr)->pcaps & LUAA_MIX_CAP_VOLUME)
+            snd_mixer_selem_set_playback_volume((*elemptr)->hdl, SND_MIXER_SCHN_REAR_LEFT, longval);
+    } else if (strcmp(index, "rrvol") == 0) { //ALSA Rear Right channel
+        longval = lua_tonumber(L, 3);
+        if ((*elemptr)->pcaps & LUAA_MIX_CAP_VOLUME)
+            snd_mixer_selem_set_playback_volume((*elemptr)->hdl, SND_MIXER_SCHN_REAR_RIGHT, longval);
+    } else if (strcmp(index, "fcvol") == 0) { //ALSA Front Center channel
+        longval = lua_tonumber(L, 3);
+        if ((*elemptr)->pcaps & LUAA_MIX_CAP_VOLUME)
+            snd_mixer_selem_set_playback_volume((*elemptr)->hdl, SND_MIXER_SCHN_FRONT_CENTER, longval);
+    } else if (strcmp(index, "wvol") == 0) { //ALSA Woofer channel
+        longval = lua_tonumber(L, 3);
+        if ((*elemptr)->pcaps & LUAA_MIX_CAP_VOLUME)
+            snd_mixer_selem_set_playback_volume((*elemptr)->hdl, SND_MIXER_SCHN_WOOFER, longval);
+    } else if (strcmp(index, "slvol") == 0) { //ALSA Side Left channel
+        longval = lua_tonumber(L, 3);
+        if ((*elemptr)->pcaps & LUAA_MIX_CAP_VOLUME)
+            snd_mixer_selem_set_playback_volume((*elemptr)->hdl, SND_MIXER_SCHN_SIDE_LEFT, longval);
+    } else if (strcmp(index, "srvol") == 0) { //ALSA Side Right channel
+        longval = lua_tonumber(L, 3);
+        if ((*elemptr)->pcaps & LUAA_MIX_CAP_VOLUME)
+            snd_mixer_selem_set_playback_volume((*elemptr)->hdl, SND_MIXER_SCHN_SIDE_RIGHT, longval);
     }
 }
 
