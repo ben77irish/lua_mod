@@ -551,6 +551,17 @@ LUAA_FUNC(amixer_elem_newindex)
                 }
             };
         }
+    } else if (strcmp(index, "channels") == 0) {
+        if (lua_istable(L, 3))
+        {
+            int length = lua_objlen( L, 3 );
+            int i;
+            for( i = 0; i < length; ++i ){
+                luaA_igettable(L, 3, i+1, number, longval);
+                if ((*elemptr)->pcaps & LUAA_MIX_CAP_VOLUME)
+                    snd_mixer_selem_set_playback_volume((*elemptr)->hdl, SND_MIXER_SCHN_FRONT_LEFT + i, longval);
+            }
+        }
     } else if (strcmp(index, "flvol") == 0) { //ALSA Front Left channel
         longval = lua_tonumber(L, 3);
         if ((*elemptr)->pcaps & LUAA_MIX_CAP_VOLUME)
