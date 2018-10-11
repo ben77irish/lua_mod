@@ -647,7 +647,7 @@ LUAA_FUNC(amixer_open)
 /*printf("5\n");*/
     mixptr = lua_newuserdata(L, sizeof(lua_amixer_t *));
     if (mixptr == NULL) goto mixer_udata_failed;
-    *mixptr = mixer; 
+    *mixptr = mixer;
 
 /*printf("6\n");*/
     mixer->hdl = hdl;
@@ -783,7 +783,7 @@ LUAA_FUNC(amixer_each)
         lua_pop(L, 1);
         return 0;
     }
-    
+
     return 3;
 }
 
@@ -866,7 +866,7 @@ LUAA_FUNC(amixer_chan_index)
     } else if (strcmp(index, "idx") == 0) {
         lua_pushnumber(L, chan->hdl);
     } else if (strcmp(index, "elem") == 0) {
-        elemptr = lua_newuserdata(L, sizeof(lua_amixer_elem_t));    
+        elemptr = lua_newuserdata(L, sizeof(lua_amixer_elem_t));
         *elemptr = chan->elem;
         luaA_settype(L, -2, "amixer_elem");
         chan->elem->refcnt++;
