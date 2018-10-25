@@ -582,7 +582,7 @@ LUAA_FUNC(amixer_elem_newindex)
         longval = lua_tonumber(L, 3);
         if ((*elemptr)->pcaps & LUAA_MIX_CAP_VOLUME)
             snd_mixer_selem_set_playback_volume((*elemptr)->hdl, SND_MIXER_SCHN_FRONT_CENTER, longval);
-    } else if (strcmp(index, "wvol") == 0) { //ALSA Woofer channel
+    } else if (strcmp(index, "subvol") == 0) { //ALSA subwoofer channel
         longval = lua_tonumber(L, 3);
         if ((*elemptr)->pcaps & LUAA_MIX_CAP_VOLUME)
             snd_mixer_selem_set_playback_volume((*elemptr)->hdl, SND_MIXER_SCHN_WOOFER, longval);
